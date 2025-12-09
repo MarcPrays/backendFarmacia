@@ -18,7 +18,7 @@ def create(data: ClientCreate, db: Session = Depends(get_db)):
     return create_client(db, data)
 
 
-@routerClient.get("/", response_model=list[ClientResponse])
+@routerClient.get("/all", response_model=list[ClientResponse])
 def list_all(db: Session = Depends(get_db)):
     return get_clients(db)
 

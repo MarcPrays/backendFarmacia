@@ -18,7 +18,7 @@ def create(data: CategoryCreate, db: Session = Depends(get_db)):
     return create_category(db, data)
 
 
-@routerCategory.get("/", response_model=list[CategoryResponse])
+@routerCategory.get("/all", response_model=list[CategoryResponse])
 def list_all(db: Session = Depends(get_db)):
     return get_categories(db)
 

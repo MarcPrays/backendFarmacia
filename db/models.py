@@ -52,6 +52,9 @@ class User(Base):
     role_id = Column(Integer, ForeignKey("roles.id"))
     first_name = Column(String(100))
     last_name = Column(String(100))
+
+    username = Column(String(100), unique=True, nullable=False)  # NUEVO
+
     email = Column(String(150))
     password = Column(String(255))
     status = Column(Integer, default=1)

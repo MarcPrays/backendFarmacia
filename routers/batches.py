@@ -10,20 +10,20 @@ from crud.batches import (
     delete_batch
 )
 
-routerBatches = APIRouter(prefix="/batches", tags=["Medicine Batches"])
+routerBatch = APIRouter(prefix="/batches", tags=["Medicine Batches"])
 
 
-@routerBatches.post("/", response_model=MedicineBatchResponse)
+@routerBatch.post("/", response_model=MedicineBatchResponse)
 def create(data: MedicineBatchCreate, db: Session = Depends(get_db)):
     return create_batch(db, data)
 
 
-@routerBatches.get("/", response_model=list[MedicineBatchResponse])
+@routerBatch.get("/", response_model=list[MedicineBatchResponse])
 def list_all(db: Session = Depends(get_db)):
     return get_batches(db)
 
 
-@routerBatches.get("/", response_model=MedicineBatchResponse)
+@routerBatch.get("/", response_model=MedicineBatchResponse)
 def get(batch_id: int, db: Session = Depends(get_db)):
     batch = get_batch(db, batch_id)
     if not batch:
@@ -31,7 +31,7 @@ def get(batch_id: int, db: Session = Depends(get_db)):
     return batch
 
 
-@routerBatches.put("/", response_model=MedicineBatchResponse)
+@routerBatch.put("/", response_model=MedicineBatchResponse)
 def update(batch_id: int, data: MedicineBatchUpdate, db: Session = Depends(get_db)):
     updated = update_batch(db, batch_id, data)
     if not updated:
@@ -39,7 +39,7 @@ def update(batch_id: int, data: MedicineBatchUpdate, db: Session = Depends(get_d
     return updated
 
 
-@routerBatches.delete("/")
+@routerBatch.delete("/")
 def delete(batch_id: int, db: Session = Depends(get_db)):
     deleted = delete_batch(db, batch_id)
     if not deleted:

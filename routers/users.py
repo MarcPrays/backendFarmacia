@@ -18,7 +18,7 @@ def create(data: UserCreate, db: Session = Depends(get_db)):
     return create_user(db, data)
 
 
-@routerUser.get("/", response_model=list[UserResponse])
+@routerUser.get("/all", response_model=list[UserResponse])
 def list_all(db: Session = Depends(get_db)):
     return get_users(db)
 

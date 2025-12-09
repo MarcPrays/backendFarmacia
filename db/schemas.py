@@ -11,6 +11,9 @@ class UserCreate(BaseModel):
     role_id: int
     first_name: str = Field(..., min_length=2, max_length=100)
     last_name: str = Field(..., min_length=2, max_length=100)
+
+    username: str = Field(..., min_length=4, max_length=100)  # NUEVO
+
     email: str = Field(..., max_length=150)
     password: str = Field(..., min_length=6, max_length=255)
 
@@ -19,6 +22,9 @@ class UserUpdate(BaseModel):
     role_id: Optional[int]
     first_name: Optional[str] = Field(None, min_length=2, max_length=100)
     last_name: Optional[str] = Field(None, min_length=2, max_length=100)
+
+    username: Optional[str]  # NUEVO
+
     email: Optional[str] = Field(None, max_length=150)
     password: Optional[str] = Field(None, min_length=6, max_length=255)
     status: Optional[int]
@@ -29,6 +35,9 @@ class UserResponse(BaseModel):
     role_id: int
     first_name: str
     last_name: str
+
+    username: str      # NUEVO
+
     email: str
     status: int
 
