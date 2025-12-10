@@ -41,6 +41,18 @@ app.add_middleware(
 Base.metadata.create_all(bind=engine)
 
 # ========================
+# ROOT ROUTE
+# ========================
+@app.get("/")
+def root():
+    return {
+        "message": "Bienvenido a la API de Farmacia",
+        "documentation": "/docs",
+        "alternative_docs": "/redoc",
+        "status": "running"
+    }
+
+# ========================
 # AUTH
 # ========================
 

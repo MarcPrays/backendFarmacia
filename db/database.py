@@ -1,19 +1,52 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 from dotenv import load_dotenv
+from urllib.parse import quote_plus
 import os
+from pathlib import Path
 
-# Cargar variables del archivo .env
-load_dotenv()
+# Obtener el directorio del proyecto
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Cargar variables del archivo .env desde el directorio raíz del proyecto
+env_path = BASE_DIR / ".env"
+load_dotenv(dotenv_path=env_path)
 
 # Variables de conexión desde .env
 MYSQL_USER = os.getenv("MYSQL_USER")
-MYSQL_PASSWORD = os.getenv("MYSQL_PASSWORD")
+MYSQL_PASSWORD = os.getenv("MYSQL_PASSWORD", "")  # Permite contraseña vacía
 MYSQL_HOST = os.getenv("MYSQL_HOST")
+MYSQL_PORT = os.getenv("MYSQL_PORT", "3306")  # Puerto por defecto 3306
 MYSQL_DB = os.getenv("MYSQL_DB")
 
-# URL DE CONEXION
-DATABASE_URL = f"mysql+pymysql://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOST}/{MYSQL_DB}"
+# Validar que las variables obligatorias estén configuradas
+if not all([MYSQL_USER, MYSQL_HOST, MYSQL_DB]):
+    raise ValueError(
+        "Error: Faltan variables de entorno. Por favor, crea un archivo .env con las siguientes variables:\n"
+        "MYSQL_USER=tu_usuario\n"
+        "MYSQL_PASSWORD=tu_contraseña (opcional, dejar vacío si no tiene contraseña)\n"
+        "MYSQL_HOST=localhost\n"
+        "MYSQL_PORT=3307 (opcional, por defecto 3306)\n"
+        "MYSQL_DB=nombre_base_datos"
+    )
+
+# Normalizar la contraseña: si está vacía o es None, usar None
+# Esto asegura que no se intente usar una contraseña vacía
+MYSQL_PASSWORD = MYSQL_PASSWORD.strip() if MYSQL_PASSWORD else None
+HAS_PASSWORD = MYSQL_PASSWORD is not None and len(MYSQL_PASSWORD) > 0
+
+# Construir URL DE CONEXION con codificación URL para caracteres especiales
+# quote_plus codifica caracteres especiales como puntos, @, etc.
+if HAS_PASSWORD:
+    # Codificar usuario, contraseña y base de datos para evitar problemas con caracteres especiales
+    encoded_user = quote_plus(str(MYSQL_USER))
+    encoded_password = quote_plus(str(MYSQL_PASSWORD))
+    encoded_db = quote_plus(str(MYSQL_DB))
+    DATABASE_URL = f"mysql+pymysql://{encoded_user}:{encoded_password}@{MYSQL_HOST}:{MYSQL_PORT}/{encoded_db}"
+else:
+    encoded_user = quote_plus(str(MYSQL_USER))
+    encoded_db = quote_plus(str(MYSQL_DB))
+    DATABASE_URL = f"mysql+pymysql://{encoded_user}@{MYSQL_HOST}:{MYSQL_PORT}/{encoded_db}"
 
 # OBJETO QUE MANEJA LA CONEXION
 engine = create_engine(DATABASE_URL)
