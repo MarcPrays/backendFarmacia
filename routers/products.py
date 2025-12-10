@@ -25,19 +25,29 @@ def create(
 
     image_path = None
 
+    # if image:
+    #     folder = "uploads/products"
+    #     os.makedirs(folder, exist_ok=True)
+
+    #     extension = image.filename.split(".")[-1]
+    #     #filename = f"{int(time.time())}.{extension}"
+
+    #     filepath = os.path.join(folder)
+
+    #     with open(filepath, "wb") as f:
+    #         f.write(image.file.read())
+
+    #     image_path = filepath
+
+
     if image:
-        folder = "uploads/products"
-        os.makedirs(folder, exist_ok=True)
+        upload_dir = "uploads/products"
+        os.makedirs(upload_dir, exist_ok=True)
+        file_path = f"{upload_dir}/{image.filename}"
 
-        extension = image.filename.split(".")[-1]
-        filename = f"{int(time.time())}.{extension}"
-
-        filepath = os.path.join(folder, filename)
-
-        with open(filepath, "wb") as f:
-            f.write(image.file.read())
-
-        image_path = filepath
+        with open(file_path, "wb") as buffer:
+            shutil.copyfileobj(image.file, buffer)
+        image_path = file_path
 
     data = ProductCreate(
         name=name,
@@ -52,7 +62,7 @@ def create(
 
 
 
-@routerProduct.get("/", response_model=list[ProductResponse])
+@routerProduct.get("/all", response_model=list[ProductResponse])
 def list_all(db: Session = Depends(get_db)):
     return get_products(db)
 
