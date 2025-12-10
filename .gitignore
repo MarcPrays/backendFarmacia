@@ -1,2 +1,50 @@
+# Entorno virtual
 venv/
+env/
+.venv/
+
+# Python cache & compilados
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Archivos de entorno / secretos
 .env
+.env.*
+secrets.json
+*.key
+*.pem
+
+# Uploads y archivos generados por el usuario
+uploads/
+media/
+staticfiles/
+
+# Bases de datos locales
+*.sqlite3
+*.db
+*.sqlite
+
+# IDEs / editores
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Logs y caches
+*.log
+.pytest_cache/
+.coverage
+.cache/
+.mypy_cache/
+
+# Distribución / empaquetado
+build/
+dist/
+*.egg-info/
+pip-wheel-metadata/
+
+# Sistema operativo
+Thumbs.db
+desktop.ini
+.DS_Store
