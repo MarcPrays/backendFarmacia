@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
@@ -27,6 +28,8 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 60
 # INIT APP
 # ========================
 app = FastAPI(title="Farmacia API")
+
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 # Permitir CORS
 app.add_middleware(

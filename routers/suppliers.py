@@ -14,33 +14,33 @@ routerSupplier = APIRouter(prefix="/suppliers", tags=["Suppliers"])
 
 
 @routerSupplier.post("/", response_model=SupplierResponse)
-def create(data: SupplierCreate, db: Session = Depends(get_db)):
+def create_supplier_endpoint(data: SupplierCreate, db: Session = Depends(get_db)):
     return create_supplier(db, data)
 
 
-@routerSupplier.get("/", response_model=list[SupplierResponse])
-def list_all(db: Session = Depends(get_db)):
+@routerSupplier.get("/all", response_model=list[SupplierResponse])
+def list_suppliers(db: Session = Depends(get_db)):
     return get_suppliers(db)
 
 
-@routerSupplier.get("/", response_model=SupplierResponse)
-def get(supplier_id: int, db: Session = Depends(get_db)):
+@routerSupplier.get("/{supplier_id}", response_model=SupplierResponse)
+def get_supplier_endpoint(supplier_id: int, db: Session = Depends(get_db)):
     supplier = get_supplier(db, supplier_id)
     if not supplier:
         raise HTTPException(404, "Supplier not found")
     return supplier
 
 
-@routerSupplier.put("/", response_model=SupplierResponse)
-def update(supplier_id: int, data: SupplierUpdate, db: Session = Depends(get_db)):
+@routerSupplier.put("/{supplier_id}", response_model=SupplierResponse)
+def update_supplier_endpoint(supplier_id: int, data: SupplierUpdate, db: Session = Depends(get_db)):
     updated = update_supplier(db, supplier_id, data)
     if not updated:
         raise HTTPException(404, "Supplier not found")
     return updated
 
 
-@routerSupplier.delete("/")
-def delete(supplier_id: int, db: Session = Depends(get_db)):
+@routerSupplier.delete("/{supplier_id}")
+def delete_supplier_endpoint(supplier_id: int, db: Session = Depends(get_db)):
     deleted = delete_supplier(db, supplier_id)
     if not deleted:
         raise HTTPException(404, "Supplier not found")
