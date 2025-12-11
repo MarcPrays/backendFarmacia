@@ -10,7 +10,8 @@ def create_product(db: Session, data: ProductCreate):
         category_id=data.category_id,
         presentation=data.presentation,
         concentration=data.concentration,
-        image=data.image
+        image=data.image,
+        status=1  # Establecer status por defecto
     )
     db.add(product)
     db.commit()
@@ -31,7 +32,10 @@ def update_product(db: Session, product_id: int, data: ProductUpdate):
     if not product:
         return None
 
-    for field, value in data.dict(exclude_unset=True).items():
+    # Solo actualizar campos que tienen valores (no None)
+    update_data = data.dict(exclude_unset=True, exclude_none=True)
+    
+    for field, value in update_data.items():
         setattr(product, field, value)
 
     db.commit()

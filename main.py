@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
@@ -15,6 +16,8 @@ from routers.clients import routerClient
 from routers.suppliers import routerSupplier
 from routers.products import routerProduct
 from routers.batches import routerBatch
+
+
 
 # ========================
 # CONFIG
@@ -39,6 +42,21 @@ app.add_middleware(
 
 # Crear tablas
 Base.metadata.create_all(bind=engine)
+
+# Servir archivos estáticos (imágenes)
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+
+# ========================
+# ROOT ROUTE
+# ========================
+@app.get("/")
+def root():
+    return {
+        "message": "Bienvenido a la API de Farmacia",
+        "documentation": "/docs",
+        "alternative_docs": "/redoc",
+        "status": "running"
+    }
 
 # ========================
 # AUTH

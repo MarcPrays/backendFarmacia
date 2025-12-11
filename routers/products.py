@@ -43,22 +43,37 @@ def create(
     if image:
         upload_dir = "uploads/products"
         os.makedirs(upload_dir, exist_ok=True)
-        file_path = f"{upload_dir}/{image.filename}"
+        
+        # Generar nombre de archivo seguro (sin caracteres especiales)
+        import uuid
+        extension = image.filename.split(".")[-1] if "." in image.filename else "jpg"
+        safe_filename = f"{uuid.uuid4()}.{extension}"
+        file_path = os.path.join(upload_dir, safe_filename)
 
         with open(file_path, "wb") as buffer:
             shutil.copyfileobj(image.file, buffer)
         image_path = file_path
 
-    data = ProductCreate(
-        name=name,
-        description=description,
-        category_id=category_id,
-        presentation=presentation,
-        concentration=concentration,
-        image=image_path
-    )
+    try:
+        data = ProductCreate(
+            name=name,
+            description=description,
+            category_id=category_id,
+            presentation=presentation,
+            concentration=concentration,
+            image=image_path
+        )
 
-    return create_product(db, data)
+        product = create_product(db, data)
+        return product
+    except Exception as e:
+        # Si hay un error, eliminar la imagen subida si existe
+        if image_path and os.path.exists(image_path):
+            try:
+                os.remove(image_path)
+            except:
+                pass
+        raise HTTPException(status_code=500, detail=f"Error al crear el producto: {str(e)}")
 
 
 
@@ -108,15 +123,24 @@ def update(
 
         image_path = filepath
 
-    data = ProductUpdate(
-        name=name,
-        description=description,
-        category_id=category_id,
-        presentation=presentation,
-        concentration=concentration,
-        status=status,
-        image=image_path
-    )
+    # Construir el diccionario de actualización solo con valores no None
+    update_dict = {}
+    if name is not None:
+        update_dict["name"] = name
+    if description is not None:
+        update_dict["description"] = description
+    if category_id is not None:
+        update_dict["category_id"] = category_id
+    if presentation is not None:
+        update_dict["presentation"] = presentation
+    if concentration is not None:
+        update_dict["concentration"] = concentration
+    if status is not None:
+        update_dict["status"] = status
+    if image_path is not None:
+        update_dict["image"] = image_path
+
+    data = ProductUpdate(**update_dict)
 
     updated = update_product(db, product_id, data)
 
