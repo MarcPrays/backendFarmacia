@@ -20,7 +20,16 @@ def create(data: CategoryCreate, db: Session = Depends(get_db)):
 
 @routerCategory.get("/all", response_model=list[CategoryResponse])
 def list_all(db: Session = Depends(get_db)):
-    return get_categories(db)
+    try:
+        return get_categories(db)
+    except Exception as e:
+        from sqlalchemy.exc import OperationalError
+        if isinstance(e, OperationalError) or "Can't connect" in str(e) or "Lost connection" in str(e):
+            raise HTTPException(
+                status_code=503,
+                detail="Servicio de base de datos no disponible. Verifica que MySQL esté corriendo."
+            )
+        raise HTTPException(status_code=500, detail=f"Error al obtener categorías: {str(e)}")
 
 
 @routerCategory.get("/", response_model=CategoryResponse)

@@ -49,7 +49,15 @@ else:
     DATABASE_URL = f"mysql+pymysql://{encoded_user}@{MYSQL_HOST}:{MYSQL_PORT}/{encoded_db}"
 
 # OBJETO QUE MANEJA LA CONEXION
-engine = create_engine(DATABASE_URL)
+# Configuración del pool de conexiones para manejar reconexiones automáticas
+engine = create_engine(
+    DATABASE_URL,
+    pool_pre_ping=True,  # Verifica conexiones antes de usarlas
+    pool_recycle=3600,   # Recicla conexiones cada hora
+    pool_size=10,         # Tamaño del pool de conexiones
+    max_overflow=20,      # Conexiones adicionales permitidas
+    echo=False            # No mostrar SQL en consola
+)
 
 # Se crea una fábrica de sesiones de base de datos.
 # - autocommit=False → las transacciones no se confirman automáticamente.
