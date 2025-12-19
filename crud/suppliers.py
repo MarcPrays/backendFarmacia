@@ -17,8 +17,20 @@ def create_supplier(db: Session, data: SupplierCreate):
     return supplier
 
 
-def get_suppliers(db: Session):
-    return db.query(Supplier).filter(Supplier.status == 1).all()
+def get_suppliers(db: Session, search: str = None):
+    """Obtener proveedores con búsqueda"""
+    query = db.query(Supplier).filter(Supplier.status == 1)
+    
+    # Búsqueda por nombre, email o teléfono
+    if search:
+        search_filter = f"%{search}%"
+        query = query.filter(
+            (Supplier.name.like(search_filter)) |
+            (Supplier.email.like(search_filter)) |
+            (Supplier.phone.like(search_filter))
+        )
+    
+    return query.all()
 
 
 def get_supplier(db: Session, supplier_id: int):

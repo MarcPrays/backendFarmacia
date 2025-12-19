@@ -18,9 +18,10 @@ def create(data: SupplierCreate, db: Session = Depends(get_db)):
     return create_supplier(db, data)
 
 
-@routerSupplier.get("/", response_model=list[SupplierResponse])
-def list_all(db: Session = Depends(get_db)):
-    return get_suppliers(db)
+@routerSupplier.get("/all", response_model=list[SupplierResponse])
+def list_all(search: str = None, db: Session = Depends(get_db)):
+    """Listar proveedores con capacidad de búsqueda"""
+    return get_suppliers(db, search=search)
 
 
 @routerSupplier.get("/", response_model=SupplierResponse)

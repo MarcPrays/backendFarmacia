@@ -16,8 +16,27 @@ def create_client(db: Session, data: ClientCreate):
     return client
 
 
-def get_clients(db: Session):
-    return db.query(Client).filter(Client.status == 1).all()
+def get_clients(db: Session, search: str = None, status: int = None):
+    """Obtener clientes con filtros"""
+    query = db.query(Client)
+    
+    # Filtro por status (por defecto solo activos)
+    if status is not None:
+        query = query.filter(Client.status == status)
+    else:
+        query = query.filter(Client.status == 1)
+    
+    # Búsqueda por nombre, email o teléfono
+    if search:
+        search_filter = f"%{search}%"
+        query = query.filter(
+            (Client.first_name.like(search_filter)) |
+            (Client.last_name.like(search_filter)) |
+            (Client.email.like(search_filter)) |
+            (Client.phone.like(search_filter))
+        )
+    
+    return query.all()
 
 
 def get_client(db: Session, client_id: int):
